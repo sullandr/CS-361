@@ -84,10 +84,13 @@ def create_account():
             if user.username == username:
                 key = input("This username already exists! Press any key to try again, 'm' to return to the main menu, or 'q' to quit. ")
                 if key == 'm':
+                    logins.close()
                     return home_screen()
                 elif key == 'q':
+                    logins.close()
                     return
                 else:
+                    logins.close()
                     return create_account()
             else:
                 line = logins.readline()
@@ -110,32 +113,30 @@ def log_in_screen():
     """
     os.system('cls') #clear the screen so it gives appearance of loading new screen.
     try:
-        with open("users.txt", 'r') as logins:
-            user_list = logins.read()
-            if len(user_list) == 0:
-                key = input("No users in system, proceeding to create a new user. ")
-                logins.close()
-                return create_account()
         with open("users.txt", 'r') as logins:    
             username = input("Please input your username: ")
             line = logins.readline()
-        while line:
-            user_info = line.split()
-            user = Users(user_info[0],user_info[1])
-            if user.username == username:
-                password = input("Please input your password: ")
-                if user.password == password:
-                    return home_screen(user)
-                else:
-                    key = input("Invalid password, press any key to input credentials again, 'm' to return to main menu, 'q' to quit: ")
-                    if key == 'm':
-                        return home_screen()
-                    elif key == 'q':
-                        return
+            while line:
+                user_info = line.split()
+                user = Users(user_info[0],user_info[1])
+                if user.username == username:
+                    password = input("Please input your password: ")
+                    if user.password == password:
+                        logins.close()
+                        return home_screen(user)
                     else:
-                        return log_in_screen()
-            else:
-                line = logins.readline()
+                        key = input("Invalid password, press any key to input credentials again, 'm' to return to main menu, 'q' to quit: ")
+                        if key == 'm':
+                            logins.close()
+                            return home_screen()
+                        elif key == 'q':
+                            logins.close()
+                            return
+                        else:
+                            logins.close()
+                            return log_in_screen()
+                else:
+                    line = logins.readline()
         key = input("Invalid username, to try again press any key, to return to main menu press 'm', to quit press 'q': ")
         if key == 'm':
             return home_screen()
@@ -167,8 +168,9 @@ def journal_entry(member=None):
         racks = input("How many racks did you play? ")
         ballcount = input("What is the ballcount of balls made this practice session? ")
         practice_type = input("What type of practice did you do? (i.e drills or regular) ")
-        now = datetime.datetime.now.split()
-        entry = Entries(now[0], now[1], table_type, racks, ballcount, practice_type)
+        current = str(datetime.datetime.now())
+        date_time = current.split()
+        entry = Entries(date_time[0], date_time[1], table_type, racks, ballcount, practice_type)
         os.system('cls')
         print("Below is your journal entry:")
         print("Date of practice: {0}".format(entry.date))
@@ -180,8 +182,6 @@ def journal_entry(member=None):
         key = input("To save future log entries, create an account.")
         return home_screen()
     else: #member journal entry
-        print(member.username)
-        print(member.password)
         print("Let's create a new journal entry!")
         print("The date and time will automatically be attached to the entry.")
         print("Please use '_' in place of ' '.")
@@ -189,10 +189,11 @@ def journal_entry(member=None):
         racks = input("How many racks did you play? ")
         ballcount = input("What is the ballcount of balls made this practice session? ")
         practice_type = input("What type of practice did you do? (i.e drills or regular) ")
-        now = datetime.datetime.now.split()
-        entry = Entries(now[0], now[1], table_type, racks, ballcount, practice_type)
-        entry_input = str(now[0]) + " " + str(now[1]) + " " + entry.table_type + " " + entry.racks + " " + entry.ballcount + " " + entry.practice_type #creates
-        #entry input in preparation for saving it
+        current = str(datetime.datetime.now())
+        date_time = current.split()
+        entry = Entries(date_time[0], date_time[1], table_type, racks, ballcount, practice_type)
+        entry_input = str(entry.date) + " " + str(entry.time) + " " + entry.table_type + " " + entry.racks + " " 
+        entry_input = entry_input + entry.ballcount + " " + entry.practice_type #creates entry input in preparation for saving it
         os.system('cls') #clear screen for appearance of fresh screen
         print("Below is your journal entry:")
         print("Date of practice: {0}".format(entry.date))
@@ -201,24 +202,14 @@ def journal_entry(member=None):
         print("Number of racks played: {0}".format(entry.racks))
         print("Number of balls made: {0}".format(entry.ballcount))
         print("Type of practice completed: {0}".format(entry.practice_type))
-        key = input("Press 's' to save this entry, any other key to delete entry and return to menu. ")
-        #key = input("stuck here now ")
-        if key == 's': #writes the entry to a file with their username so it cannot be confused with anyone else's.
-            filename = member.username + ".txt"
-            #print("made it here")
-            with open(filename, 'a+') as entries:
-                #print("got the file opened")
-                entries.write(entry_input)
-                #print("wrote the entry")
-                entries.write("\n")
-                #print("write the new line")
-                entries.close()
-                #print("closed the file")
-                key = input("Entry saved, press any key to return to the menu. ")
-                #print("made it here as well")
-            return home_screen(member)
-        else:
-            return home_screen(member)
+        key = input("Press any key to save this entry and return to the menu. ")
+        filename = member.username + ".txt"
+        with open(filename, 'a+') as entries:
+            entries.write(entry_input)
+            entries.write("\n")
+            entries.close()
+            key = input("Entry saved, press any key to return to the menu. ")
+        return home_screen(member)
 
 def print_all_entries(member):
     """prints all journal entries for the member at one time
