@@ -2,6 +2,7 @@ from class_def import *
 
 import os
 import datetime
+import requests
 
 def home_screen(member=None):
     """main menu of program, has two modes, regular menu or member menu. logging into an account will bring up the member menu, otherwise loads
@@ -24,6 +25,7 @@ def home_screen(member=None):
         print("'3' Type an entry without logging in (Member log in required to save log entry.)")
         print("'4' Exit")
         print('*** Any invalid entry will reload the current page ***\n\n\n')
+        print("'5' BONUS (generates a random city and state in json format and prints it)")
         while True: #endless loop waiting for valid input
             choice = int(input('Input your selection here: '))
             if choice == 1: #if they choose 1, go to log in page
@@ -34,6 +36,13 @@ def home_screen(member=None):
                 return journal_entry()
             elif choice == 4: #if they choose 4, exit program without saving anything, close all connections, etc.
                 return
+            elif choice == 5:#if they choose 5, make get request to the server and print the result
+                micro_server = 'http://127.0.0.1:5000/companies'
+                response = requests.get(micro_server)
+                code = response.json()
+                print(code)
+                input("Press any key to return to the main menu")
+                return home_screen()
             else:
                 return home_screen()
     else: #display if member logged in
