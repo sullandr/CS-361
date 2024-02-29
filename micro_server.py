@@ -6,11 +6,11 @@ import time
 
 from flask import Flask, json
 
-companies = [{"id": 1, "name": "Company One"}, {"id": 2, "name": "Company Two"}]
+#companies = [{"id": 1, "name": "Company One"}, {"id": 2, "name": "Company Two"}]
 
 api = Flask(__name__)
 
-@api.route('/companies', methods=['GET'])
+@api.route('/cities', methods=['GET'])
 def get_companies():
     with open("./CS-361/cities.json",'r') as file:
         cities = json.load(file)

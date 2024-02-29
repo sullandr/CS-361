@@ -37,7 +37,7 @@ def home_screen(member=None):
             elif choice == 4: #if they choose 4, exit program without saving anything, close all connections, etc.
                 return
             elif choice == 5:#if they choose 5, make get request to the server and print the result
-                micro_server = 'http://127.0.0.1:5000/companies'
+                micro_server = 'http://127.0.0.1:5000/cities'
                 response = requests.get(micro_server)
                 code = response.json()
                 print(code)
