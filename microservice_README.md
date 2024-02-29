@@ -42,3 +42,14 @@ code = response.json()
 #converting the code to json format and assigning it to a new variable for use in the program
 
 ---------------------------------------------
+## UML Diagram
+```mermaid
+sequenceDiagram
+ App->>+micro_service: App sends a GET request
+    micro_service->>+micro_service: receives request
+    micro_service->>+micro_service: opens compiled json file of cities/states
+    micro_service->>+micro_service: randomly selects a key(state)
+    micro_service->>+micro_service: randomly selects a value(list of states)
+    micro_service->>+micro_service: creates a dictionary that holds the city and state
+    micro_service-->>-App: Sends the dictionary back to the app in json format
+```
