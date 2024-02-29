@@ -6,7 +6,7 @@
 # python -m http.server
 import requests
 
-micro_server = 'http://127.0.0.1:5000/cities'
+micro_server = 'http://127.0.0.1:5001/cities'
 
 response = requests.get(micro_server)
 code = response.json()

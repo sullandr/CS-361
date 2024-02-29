@@ -29,7 +29,7 @@ def get_companies():
     return json.dumps(response)
 
 if __name__ == '__main__':
-    api.run()
+    api.run(debug=True, port=5001)
 #if __name__ == '__main__':
     #run_server = 'python -m http.server'
     #os.system(run_server)
