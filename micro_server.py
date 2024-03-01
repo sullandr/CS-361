@@ -27,4 +27,4 @@ def get_cities():
     return json.dumps(response)
 
 if __name__ == '__main__':
-    api.run(debug=True, port=5001)
+    api.run(debug=False, port=5001)
