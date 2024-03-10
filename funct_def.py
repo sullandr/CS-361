@@ -28,7 +28,6 @@ def home_screen(member=None):
         print("'4' Exit")
         print('*** Any invalid entry will reload the current page ***\n\n\n')
         print("'5' BONUS (generates a random city and state in json format and prints it)")
-        print("'6' Timestamp")
         while True: #endless loop waiting for valid input
             choice = int(input('Input your selection here: '))
             if choice == 1: #if they choose 1, go to log in page
@@ -46,8 +45,6 @@ def home_screen(member=None):
                 print(code)
                 input("Press any key to return to the main menu")
                 return home_screen()
-            elif choice == 6: #get timestamp from microservice
-                return get_timestamp()
             else:
                 return home_screen()
     else: #display if member logged in
