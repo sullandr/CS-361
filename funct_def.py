@@ -3,6 +3,8 @@ from class_def import *
 import os
 import datetime
 import requests
+import socket
+import json
 
 def home_screen(member=None):
     """main menu of program, has two modes, regular menu or member menu. logging into an account will bring up the member menu, otherwise loads
@@ -26,6 +28,7 @@ def home_screen(member=None):
         print("'4' Exit")
         print('*** Any invalid entry will reload the current page ***\n\n\n')
         print("'5' BONUS (generates a random city and state in json format and prints it)")
+        print("'6' Timestamp")
         while True: #endless loop waiting for valid input
             choice = int(input('Input your selection here: '))
             if choice == 1: #if they choose 1, go to log in page
@@ -36,13 +39,15 @@ def home_screen(member=None):
                 return journal_entry()
             elif choice == 4: #if they choose 4, exit program without saving anything, close all connections, etc.
                 return
-            elif choice == 5:#if they choose 5, make get request to the server and print the result
+            elif choice == 5: #if they choose 5, make get request to the server and print the result
                 micro_server = 'http://127.0.0.1:5001/cities'
                 response = requests.get(micro_server)
                 code = response.json()
                 print(code)
                 input("Press any key to return to the main menu")
                 return home_screen()
+            elif choice == 6: #get timestamp from microservice
+                return get_timestamp()
             else:
                 return home_screen()
     else: #display if member logged in
@@ -177,9 +182,11 @@ def journal_entry(member=None):
         racks = input("How many racks did you play? ")
         ballcount = input("What is the ballcount of balls made this practice session? ")
         practice_type = input("What type of practice did you do? (i.e drills or regular) ")
-        current = str(datetime.datetime.now())
-        date_time = current.split()
-        entry = Entries(date_time[0], date_time[1], table_type, racks, ballcount, practice_type)
+        timezone = input("enter integer in range [-12 ... 14] or shortcode (PST, MST, etc.): ")
+        current = get_timestamp(timezone)
+        cur_date = str(current['month']) + "-" + str(current['day']) + "-" + str(current['year'])
+        cur_time = str(current['hour']) + ":" + str(current['minute']) + ":" + str(current['second'])
+        entry = Entries(cur_date, cur_time, table_type, racks, ballcount, practice_type)
         os.system('cls')
         print("Below is your journal entry:")
         print("Date of practice: {0}".format(entry.date))
@@ -198,9 +205,11 @@ def journal_entry(member=None):
         racks = input("How many racks did you play? ")
         ballcount = input("What is the ballcount of balls made this practice session? ")
         practice_type = input("What type of practice did you do? (i.e drills or regular) ")
-        current = str(datetime.datetime.now())
-        date_time = current.split()
-        entry = Entries(date_time[0], date_time[1], table_type, racks, ballcount, practice_type)
+        timezone = input("enter integer in range [-12 ... 14] or shortcode (PST, MST, etc.): ")
+        current = get_timestamp(timezone)
+        cur_date = str(current['month']) + "-" + str(current['day']) + "-" + str(current['year'])
+        cur_time = str(current['hour']) + ":" + str(current['minute']) + ":" + str(current['second'])
+        entry = Entries(cur_date, cur_time, table_type, racks, ballcount, practice_type)
         entry_input = str(entry.date) + " " + str(entry.time) + " " + entry.table_type + " " + entry.racks + " " 
         entry_input = entry_input + entry.ballcount + " " + entry.practice_type #creates entry input in preparation for saving it
         os.system('cls') #clear screen for appearance of fresh screen
@@ -314,6 +323,20 @@ def delete_all(member):
         return home_screen(member)
     else:
         return home_screen(member)
+
+def get_timestamp(timezone):
+    HOST = "127.0.0.1"
+    PORT = 13000
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect((HOST, PORT))     # connect to socket server
+        print(f"\nRequest: {timezone}")
+        s.sendall(timezone.encode("utf-8"))     # send data
+        data = s.recv(1024)     # receive response
+        response = json.loads(data.decode("utf-8"))     # decode and unpack JSON data
+        print(f"Received: {response}\n")
+        key = input("Waiting to proceed")
+    return response
 
 if __name__ == "__main__":
     home_screen()
