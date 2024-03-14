@@ -1,7 +1,6 @@
 from class_def import *
 
 import os
-import datetime
 import requests
 import socket
 import json
